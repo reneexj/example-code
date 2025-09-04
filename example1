@@ -1,0 +1,54 @@
+# clean ----------------------------------------------------------
+rm(list=ls())
+graphics.off()
+
+# library ---------------------------------------------------------
+library(readxl)
+## Import excel files into R.
+library(here)
+library(Hmisc)
+library(tidyverse) 
+## Includes the packages that you�re likely to use in everyday data analyses: ggplot2, dplyr, tidyr, readr ...)
+library(janitor) 
+## to use tabyl function
+library(flextable)
+## provides a framework for easily create tables for reporting and publications. 
+library(officer)
+## manipulate images, tables and text into documents from R.
+library(lme4)
+## Fit linear and generalized linear mixed-effects models.
+library(mice)
+## Multivariate Imputation by Chained Equations.
+library(rms)
+library(ggpubr)
+##'ggplot2' Based Publication Ready Plots, use comparemeans to add p-values a lot.
+library(mosaic)
+#library(tableone)
+library(compareGroups)
+library(REDCapTidieR)
+
+# set output format of word document ----------------------------------------------
+set_flextable_defaults(font.size = 9, theme_fun = theme_vanilla, padding = 6, font.family = "Times New Roman")
+
+# work directory --------------------------------------------------
+BaseDir <- here::here()
+OrigDataDir <- paste(BaseDir, "/orig_data/", sep = "")
+DataDir <- paste(BaseDir, "/data/", sep = "")
+GraphDir <- paste(BaseDir, "/graphs/", sep = "")
+OtherDir <- paste(BaseDir, "/others/", sep = "")
+
+
+#load excel files
+og.tofa <- read_excel(paste0(OrigDataDir, "Tofa Extract v2.0.xlsx")) %>% unique()
+og.upa <- read_csv(paste0(OrigDataDir, "Upadacitinib extract v2.0.csv")) %>% unique()
+
+#read REDCap token and URI
+#do NOT directly type REDCap API token in the programming scripts to ensure data security
+token.tofa <- read_excel(paste0(OrigDataDir, "redcap_token.xlsx"), sheet = "Tofa") %>% select(token) %>% unlist()
+token.upa <- read_excel(paste0(OrigDataDir, "redcap_token.xlsx"), sheet = "Upa") %>% select(token) %>% unlist()
+ccfuri <- read_excel(paste0(OrigDataDir, "redcap_token.xlsx"), sheet = "Upa") %>% select(redcap_uri) %>% unlist()
+
+ogrc.tofa <- read_redcap(redcap_uri = ccfuri, token = token.tofa)
+ogrc.upa <- read_redcap(redcap_uri = ccfuri, token = token.upa) 
+
+
